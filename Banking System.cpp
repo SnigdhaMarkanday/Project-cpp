@@ -1,29 +1,54 @@
 #include<iostream>
+#include<fstream>
+#include<cstdlib>
+#include<vector>
+#include<map>
 using namespace std;
-int main(){
-    int c;
-    cout<<"Select your choice"<<endl<<"1.Open an Account"<<endl<<"2.Balance Enquiry"<<endl<<"3.Deposit"<<endl<<"4.Withdrawal"<<endl<<"5.Close an Acccount"<<endl;
-    cout<<"6.Show all accounts"<<endl<<"7.Quit"<<endl;
-    switch(c){
-      case 1:{
-          void Open Acc();
-      }
-      case 2:{
-          void Balance enq();
-       }
-       case 3:{
-          void Deposite();
-       }
-       case 4:{
-            void Withdrawal();
-        }
-        case 5:{
-            void Close acc();
-         }
-         case 6:{
-            void show();
-         }
-         case 7:{
-            void Quit();
-         }
-     }
+#define MIN_BALANCE 500
+class InsufficientFunds{};
+class Account
+{
+private:
+ long accountNumber;
+ string firstName;
+ string lastName;
+ float balance;
+ static long NextAccountNumber;
+public:
+ Account(){}
+ Account(string fname,string lname,float balance);
+ long getAccNo(){return accountNumber;}
+ string getFirstName(){return firstName;}
+ string getLastName(){return lastName;}
+ float getBalance(){return balance;}
+
+ void Deposit(float amount);
+ void Withdraw(float amount);
+ static void setLastAccountNumber(long accountNumber);
+ static long getLastAccountNumber();
+ friend ofstream & operator<<(ofstream &ofs,Account &acc);
+ friend ifstream & operator>>(ifstream &ifs,Account &acc);
+ friend ostream & operator<<(ostream &os,Account &acc);
+};
+long Account::NextAccountNumber=0;
+class Bank
+{
+private:
+ map<long,Account> accounts;
+public:
+ Bank();
+ Account OpenAccount(string fname,string lname,float balance);
+ Account BalanceEnquiry(long accountNumber);
+ Account Deposit(long accountNumber,float amount);
+ Account Withdraw(long accountNumber,float amount);
+ void CloseAccount(long accountNumber);
+ void ShowAllAccounts();
+ ~Bank();
+};
+int main()
+{
+ Bank b;
+ Account acc;
+
+ int choice;
+ string fname,lname;
